@@ -31,4 +31,4 @@ jobs:
         # Jika sudah ada pull request yang sama, update PR yang sudah ada
         update_existing: true
         # Gunakan token GitHub untuk autentikasi
-        token: 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
+        token: ${{ secrets.GITHUB_TOKEN }}
