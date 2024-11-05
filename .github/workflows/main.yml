@@ -1,0 +1,24 @@
+name: Auto Pull Request to Master
+
+on:
+  push:
+    branches:
+      - develop  # Trigger ketika ada push ke branch develop
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Create Pull Request
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: develop
+        destination_branch: master
+        pr_title: 'Auto Merge Develop into Master'
+        pr_body: 'Pull request otomatis untuk menggabungkan perubahan dari develop ke master'
+        pr_draft: false  # Atur ke true jika ingin pull request dalam status draft
+        github_token: ${{ secrets.GITHUB_TOKEN }}
