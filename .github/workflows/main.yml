@@ -1,34 +1,26 @@
-name: Auto Pull Request from Develop to Master
+name: Auto Pull Request to Master
 
 on:
   push:
     branches:
-      - develop  # Workflow akan berjalan setiap ada push ke branch develop
+      - develop
 
 jobs:
-  create-pr:
+  create-pull-request:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v4
-      with:
-        # Branch tujuan (target) untuk pull request
-        base: master
-        # Branch sumber (source) dari mana pull request akan dibuat
-        head: develop
-        # Judul pull request yang akan dibuat
-        title: 'Auto Merge Develop into Master'
-        # Deskripsi atau body dari pull request
-        body: |
-          Pull request otomatis untuk menggabungkan perubahan dari develop ke master.
-          Mohon tinjau dan lakukan merge jika sudah siap.
-        # Nama branch sementara yang akan digunakan oleh action ini untuk membuat pull request
-        branch: auto-pr/develop-to-master
-        # Jika sudah ada pull request yang sama, update PR yang sudah ada
-        update_existing: true
-        # Gunakan token GitHub untuk autentikasi
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Pull Request
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: develop
+          destination_branch: master
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_title: "Auto PR: Merge develop into master"
+          pr_body: |
+            This is an automatically generated pull request to merge changes from `develop` into `master`.
+          pr_draft: false
+          pr_label: "auto-merge"
