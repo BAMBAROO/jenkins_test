@@ -35,14 +35,13 @@ jobs:
           -H "Authorization: ${{ secrets.CLICKUP_TOKEN }}" \
           -H "Content-Type: application/json" \
           -d '{
-            "name": "PR #'"$PR_NUMBER"' Task",
-            "description": "This task is associated with PR number '"$PR_NUMBER"'",
-            "status": "OPEN",
-            "assignees": [90602611],
+            "name": "PR #'${PR_NUMBER}' Task",
+            "description": "This task is associated with PR number '${PR_NUMBER}'",
+            "status": "open",
             "custom_fields": [
               {
-                "id": "custom_field_id_for_pr_number",
-                "value": "'"$PR_NUMBER"'"
+                "id": "actual_custom_field_id_for_pr_number",
+                "value": "'${PR_NUMBER}'"
               }
             ]
           }'
