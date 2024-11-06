@@ -1,0 +1,1 @@
+import{_ as s,c as t,a as o,o as a}from"./index-Bcm0_TX_.js";const c={},n={class:"about"};function r(_,e){return a(),t("div",n,e[0]||(e[0]=[o("h1",null,"This is an cartel page",-1)]))}const l=s(c,[["render",r]]);export{l as default};
