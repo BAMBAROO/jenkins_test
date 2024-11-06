@@ -40,7 +40,7 @@ jobs:
             "status": "open",
             "custom_fields": [
               {
-                "id": "actual_custom_field_id_for_pr_number",
+                "id": "8b298a3f-2e44-4b69-b7ef-9769f1417bd8",
                 "value": "'${PR_NUMBER}'"
               }
             ]
