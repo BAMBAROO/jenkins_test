@@ -38,6 +38,7 @@ jobs:
             "name": "PR #'${PR_NUMBER}' Task",
             "description": "This task is associated with PR number '${PR_NUMBER}'",
             "status": "open",
+            "assignees": [90602611],
             "custom_fields": [
               {
                 "id": "8b298a3f-2e44-4b69-b7ef-9769f1417bd8",
