@@ -46,8 +46,8 @@ jobs:
             # Simpan pesan konflik ke file sementara dan gunakan `printf` untuk format yang aman
             merge_message=$(<merge_output.txt)
             echo "${merge_message}" | sed 's/%/%25/g; s/\n/%0A/g; s/\r/%0D/g' > temp_merge_message.txt
-            printf "merge_message=%s\n" "$(cat temp_merge_message.txt)" >> $GITHUB_ENV
-            git --no-pager diff --name-only --diff-filter=U
+            # printf "merge_message=%s\n" "$(cat temp_merge_message.txt)" >> $GITHUB_ENV
+            # git --no-pager diff --name-only --diff-filter=U
           fi
         shell: bash
 
