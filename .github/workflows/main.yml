@@ -19,6 +19,12 @@ jobs:
           ref: master
           fetch-depth: 0
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "bryanathallah7@gmail.com"
+          git config --global user.name "Bryan Athallah"
+
+
       - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
