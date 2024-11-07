@@ -24,7 +24,6 @@ jobs:
           git config --global user.email "bryanathallah7@gmail.com"
           git config --global user.name "Bryan Athallah"
 
-
       - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
@@ -37,16 +36,31 @@ jobs:
           cd develop
           git fetch origin master
           git checkout -b temp-merge-branch
-          git merge origin/master --no-commit --no-ff --allow-unrelated-histories
-          if [ $? -eq 0 ]; then
+          # Coba merge dan simpan output ke file untuk dianalisis
+          if git merge origin/master --no-commit --no-ff --allow-unrelated-histories >merge_output.txt 2>&1; then
             echo "Merge succeeded with no conflicts."
-            echo "::set-output name=merge_status::success"
+            echo "merge_status=success" >> $GITHUB_ENV
           else
             echo "Merge failed with conflicts."
-            echo "::set-output name=merge_status::conflict"
+            echo "merge_status=conflict" >> $GITHUB_ENV
+            echo "merge_message=$(cat merge_output.txt)" >> $GITHUB_ENV
             git --no-pager diff --name-only --diff-filter=U
           fi
         shell: bash
+
+      - name: Handle merge conflicts
+        if: env.merge_status == 'conflict'
+        run: |
+          echo "Handling merge conflict..."
+          echo "Conflict details:"
+          echo "$merge_message"  # Menampilkan pesan konflik yang disimpan
+          # Tambahkan tindakan khusus yang ingin Anda jalankan jika terjadi konflik
+
+      - name: Handle successful merge
+        if: env.merge_status == 'success'
+        run: |
+          echo "Merge was successful. Proceeding with the workflow..."
+          # Tambahkan tindakan yang ingin Anda jalankan jika merge berhasil
 
       - name: Create Pull Request
         if: ${{ success() }}
