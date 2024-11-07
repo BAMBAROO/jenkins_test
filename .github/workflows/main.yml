@@ -19,14 +19,14 @@ jobs:
           ref: master
           fetch-depth: 0
       
-      - name: Fetch and check branch existence
-        run: |
-          git fetch --verbose
-          git branch -a
+      - name: Fetch all branches and tags
+        run: git fetch --all --verbose
+
+      - name: List all branches
+        run: git branch -av
 
       - name: Merge develop branch into master
         run: |
-          git fetch origin develop
           merge_output=$(git merge --no-commit --no-ff origin/develop 2>&1)
           merge_exit_code=$?
           echo "::set-output name=merge_output::${merge_output}"
