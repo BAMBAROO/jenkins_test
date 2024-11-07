@@ -18,6 +18,11 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
+      
+      - name: Fetch and check branch existence
+        run: |
+          git fetch --verbose
+          git branch -a
 
       - name: Merge develop branch into master
         run: |
