@@ -39,34 +39,32 @@ jobs:
           # Coba merge dan simpan output ke file untuk dianalisis
           if git merge origin/master --no-commit --no-ff --allow-unrelated-histories >merge_output.txt 2>&1; then
             echo "Merge succeeded with no conflicts."
-            echo "merge_status=success" >> $GITHUB_ENV
+            echo "::set-output name=merge_status::success"
           else
             echo "Merge failed with conflicts."
-            echo "merge_status=conflict" >> $GITHUB_ENV
-            # Simpan pesan konflik ke file sementara dan gunakan `printf` untuk format yang aman
+            echo "::set-output name=merge_status::conflict"
+            # Simpan pesan konflik ke output
             merge_message=$(<merge_output.txt)
-            echo "${merge_message}" | sed 's/%/%25/g; s/\n/%0A/g; s/\r/%0D/g' > temp_merge_message.txt
-            # printf "merge_message=%s\n" "$(cat temp_merge_message.txt)" >> $GITHUB_ENV
-            # git --no-pager diff --name-only --diff-filter=U
+            echo "::set-output name=merge_message::${merge_message}"
+            git --no-pager diff --name-only --diff-filter=U
           fi
         shell: bash
 
       - name: Handle merge conflicts
-        if: env.merge_status == 'conflict'
+        if: steps.merge_attempt.outputs.merge_status == 'conflict'
         run: |
           echo "Handling merge conflict..."
           echo "Conflict details:"
-          echo "$merge_message"  # Menampilkan pesan konflik yang disimpan
+          echo "${{ steps.merge_attempt.outputs.merge_message }}"  # Menampilkan pesan konflik yang disimpan
           # Tambahkan tindakan khusus yang ingin Anda jalankan jika terjadi konflik
 
       - name: Handle successful merge
-        if: env.merge_status == 'success'
+        if: steps.merge_attempt.outputs.merge_status == 'success'
         run: |
           echo "Merge was successful. Proceeding with the workflow..."
           # Tambahkan tindakan yang ingin Anda jalankan jika merge berhasil
 
       - name: Create Pull Request
-        if: ${{ success() }}
         id: create_pr
         uses: repo-sync/pull-request@v2
         with:
@@ -80,11 +78,9 @@ jobs:
           pr_label: "auto-merge"
 
       - name: OUTPUR PR NUMBER
-        if: ${{ success() }}
         run: echo "The PR Number is ${{ steps.create_pr.outputs.pr_number}}"
 
       - name: Create Task in ClickUp with PR Number
-        if: ${{ success() }}
         env:
           PR_NUMBER: ${{ steps.create_pr.outputs.pr_number }}
         run: |
