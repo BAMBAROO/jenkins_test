@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
 jobs:
   create-pull-request:
@@ -57,3 +61,27 @@ jobs:
               }
             ]
           }'
+
+      - name: Check for merge conflicts
+        id: conflicts
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const response = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            const mergeable = response.data.mergeable;
+            if (mergeable === false) {
+              console.log("Conflict detected in pull request #" + context.issue.number);
+              return "true";
+            } else {
+              console.log("No conflict detected in pull request #" + context.issue.number);
+              return "false";
+            }
+          result-encoding: string
+
+      - name: Log conflict notification
+        if: steps.conflicts.outputs.result == 'true'
+        run: echo "Conflict detected. Action required."
