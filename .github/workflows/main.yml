@@ -43,10 +43,10 @@ jobs:
           else
             echo "Merge failed with conflicts."
             echo "::set-output name=merge_status::conflict"
-            echo "Merge failed with conflicts."
-            merge_message=$(<merge_output.txt)
-            echo "Merge failed with conflicts."
-            echo "::set-output name=merge_message::${merge_message}"
+            # echo "Merge failed with conflicts."
+            # merge_message=$(<merge_output.txt)
+            # echo "Merge failed with conflicts."
+            # echo "::set-output name=merge_message::${merge_message}"
             git --no-pager diff --name-only --diff-filter=U
           fi
         shell: bash
