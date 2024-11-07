@@ -70,14 +70,14 @@ jobs:
             const response = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.issue.number
+              pull_number: github.event.pull_request.number
             });
             const mergeable = response.data.mergeable;
             if (mergeable === false) {
-              console.log("Conflict detected in pull request #" + context.issue.number);
+              console.log("Conflict detected in pull request #" + github.event.pull_request.number);
               return "true";
             } else {
-              console.log("No conflict detected in pull request #" + context.issue.number);
+              console.log("No conflict detected in pull request #" + github.event.pull_request.number);
               return "false";
             }
           result-encoding: string
