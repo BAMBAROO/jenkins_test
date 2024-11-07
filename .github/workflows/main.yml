@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
-  pull_request_target:
-    types: [opened, synchronize, reopened]
 
 jobs:
   create-pull-request:
@@ -23,30 +19,28 @@ jobs:
           ref: master
           fetch-depth: 0
 
-      - name: Check for merge conflicts
-        id: conflicts
-        uses: actions/github-script@v6
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
         with:
-          script: |
-            if (github.event.pull_request) {
-              const response = await github.rest.pulls.get({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: github.event.pull_request.number
-              });
-              const mergeable = response.data.mergeable;
-              if (mergeable === false) {
-                console.log("Conflict detected in pull request #" + github.event.pull_request.number);
-                return "true";
-              } else {
-                console.log("No conflict detected in pull request #" + github.event.pull_request.number);
-                return "false";
-              }
-            } else {
-              console.log("This event is not a pull request. Skipping conflict check.");
-              return "false";
-            }
-          result-encoding: string
+          ref: 'develop'
+          path: 'develop'
+
+      - name: Attempt to merge develop into master
+        id: merge_attempt
+        run: |
+          cd develop
+          git fetch origin master
+          git checkout -b temp-merge-branch
+          git merge origin/master --no-commit --no-ff
+          if [ $? -eq 0 ]; then
+            echo "Merge succeeded with no conflicts."
+            echo "::set-output name=merge_status::success"
+          else
+            echo "Merge failed with conflicts."
+            echo "::set-output name=merge_status::conflict"
+            git --no-pager diff --name-only --diff-filter=U
+          fi
+        shell: bash
 
       - name: Create Pull Request
         if: ${{ success() }}
@@ -86,7 +80,3 @@ jobs:
               }
             ]
           }'
-
-      - name: Log conflict notification
-        if: steps.conflicts.outputs.result == 'true'
-        run: echo "Conflict detected. Action required."
