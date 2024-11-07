@@ -19,36 +19,36 @@ jobs:
           ref: master
           fetch-depth: 0
       
-      - name: Fetch all branches and tags
-        run: git fetch --all --verbose
+      # - name: Fetch all branches and tags
+      #   run: git fetch --all --verbose
 
-      - name: List all branches
-        run: git branch -av
+      # - name: List all branches
+      #   run: git branch -av
 
-      - name: Merge develop branch into master
-        run: |
-          merge_output=$(git merge --no-commit --no-ff origin/develop 2>&1)
-          merge_exit_code=$?
-          echo "::set-output name=merge_output::${merge_output}"
-          exit $merge_exit_code
+      # - name: Merge develop branch into master
+      #   run: |
+      #     merge_output=$(git merge --no-commit --no-ff origin/develop 2>&1)
+      #     merge_exit_code=$?
+      #     echo "::set-output name=merge_output::${merge_output}"
+      #     exit $merge_exit_code
 
-      - name: Handle merge failure
-        if: ${{ failure() }}
-        run: |
-          merge_output="${{ steps.previous_step.outputs.merge_output }}"
-          echo "Merge failed with the following output:"
-          echo "$merge_output"
-          echo "$merge_output" | grep 'CONFLICT' 
-          curl -X POST https://api.clickup.com/api/v2/list/901804076439/task \
-          -H "Authorization: ${{ secrets.CLICKUP_TOKEN }}" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "name": "Merge Conlfict",
-            "description": "'$merge_output'",
-            "status": "open",
-            "assignees": [90602611],
-          }'
-          exit 1
+      # - name: Handle merge failure
+      #   if: ${{ failure() }}
+      #   run: |
+      #     merge_output="${{ steps.previous_step.outputs.merge_output }}"
+      #     echo "Merge failed with the following output:"
+      #     echo "$merge_output"
+      #     echo "$merge_output" | grep 'CONFLICT' 
+      #     curl -X POST https://api.clickup.com/api/v2/list/901804076439/task \
+      #     -H "Authorization: ${{ secrets.CLICKUP_TOKEN }}" \
+      #     -H "Content-Type: application/json" \
+      #     -d '{
+      #       "name": "Merge Conlfict",
+      #       "description": "'$merge_output'",
+      #       "status": "open",
+      #       "assignees": [90602611],
+      #     }'
+      #     exit 1
 
       - name: Create Pull Request
         if: ${{ success() }}
