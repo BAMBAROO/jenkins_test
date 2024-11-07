@@ -43,10 +43,9 @@ jobs:
           else
             echo "Merge failed with conflicts."
             echo "::set-output name=merge_status::conflict"
-            # Simpan pesan konflik ke output
-            merge_message=$(<merge_output.txt)
             echo "::set-output name=merge_message::${merge_message}"
             git --no-pager diff --name-only --diff-filter=U
+            merge_message=$(<merge_output.txt)
           fi
         shell: bash
 
@@ -55,7 +54,8 @@ jobs:
         run: |
           echo "Handling merge conflict..."
           echo "Conflict details:"
-          echo "${{ steps.merge_attempt.outputs.merge_message }}"  # Menampilkan pesan konflik yang disimpan
+          # echo "${{ steps.merge_attempt.outputs.merge_message }}"  # Menampilkan pesan konflik yang disimpan
+          echo "${{ steps.merge_attempt.outputs.name }}"  # Menampilkan pesan konflik yang disimpan
           # Tambahkan tindakan khusus yang ingin Anda jalankan jika terjadi konflik
 
       - name: Handle successful merge
