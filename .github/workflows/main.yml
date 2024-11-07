@@ -54,7 +54,7 @@ jobs:
         run: |
           echo "Handling merge conflict..."
           echo "Conflict details:"
-          # echo "${{ steps.merge_attempt.outputs.merge_message }}"  # Menampilkan pesan konflik yang disimpan
+          echo "${{ steps.merge_attempt.outputs.merge_message }}"  # Menampilkan pesan konflik yang disimpan
           echo "${{ steps.merge_attempt.outputs.name }}"  # Menampilkan pesan konflik yang disimpan
           # Tambahkan tindakan khusus yang ingin Anda jalankan jika terjadi konflik
 
