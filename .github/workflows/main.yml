@@ -1,59 +1,59 @@
-# name: Auto Pull Request to Master
+name: Auto Pull Request to Master
 
-# on:
-#   push:
-#     branches:
-#       - develop
+on:
+  push:
+    branches:
+      - develop
 
-# jobs:
-#   create-pull-request:
-#     runs-on: ubuntu-latest
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-#       - name: Checkout master branch
-#         uses: actions/checkout@v3
-#         with:
-#           ref: master
-#           fetch-depth: 0
+      # - name: Checkout master branch
+      #   uses: actions/checkout@v3
+      #   with:
+      #     ref: master
+      #     fetch-depth: 0
 
-#       - name: Create Pull Request
-#         if: ${{ success() }}
-#         id: create_pr
-#         uses: repo-sync/pull-request@v2
-#         with:
-#           source_branch: develop
-#           destination_branch: master
-#           github_token: ${{ secrets.GITHUB_TOKEN }}
-#           pr_title: "Auto PR: Merge develop into master"
-#           pr_body: |
-#             This is an automatically generated pull request to merge changes from `develop` into `master`.
-#           pr_draft: false
-#           pr_label: "auto-merge"
+      # - name: Create Pull Request
+      #   if: ${{ success() }}
+      #   id: create_pr
+      #   uses: repo-sync/pull-request@v2
+      #   with:
+      #     source_branch: develop
+      #     destination_branch: master
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     pr_title: "Auto PR: Merge develop into master"
+      #     pr_body: |
+      #       This is an automatically generated pull request to merge changes from `develop` into `master`.
+      #     pr_draft: false
+      #     pr_label: "auto-merge"
 
-#       - name: OUTPUR PR NUMBER
-#         if: ${{ success() }}
-#         run: echo "The PR Number is ${{ steps.create_pr.outputs.pr_number}}"
+      # - name: OUTPUR PR NUMBER
+      #   if: ${{ success() }}
+      #   run: echo "The PR Number is ${{ steps.create_pr.outputs.pr_number}}"
 
-#       - name: Create Task in ClickUp with PR Number
-#         if: ${{ success() }}
-#         env:
-#           PR_NUMBER: ${{ steps.create_pr.outputs.pr_number }}
-#         run: |
-#           curl -X POST https://api.clickup.com/api/v2/list/901804076439/task \
-#           -H "Authorization: ${{ secrets.CLICKUP_TOKEN }}" \
-#           -H "Content-Type: application/json" \
-#           -d '{
-#             "name": "PR #'${PR_NUMBER}' Task",
-#             "description": "This task is associated with PR number '${PR_NUMBER}'",
-#             "status": "open",
-#             "assignees": [90602611],
-#             "custom_fields": [
-#               {
-#                 "id": "8b298a3f-2e44-4b69-b7ef-9769f1417bd8",
-#                 "value": "'${PR_NUMBER}'"
-#               }
-#             ]
-#           }'
+      # - name: Create Task in ClickUp with PR Number
+      #   if: ${{ success() }}
+      #   env:
+      #     PR_NUMBER: ${{ steps.create_pr.outputs.pr_number }}
+      #   run: |
+      #     curl -X POST https://api.clickup.com/api/v2/list/901804076439/task \
+      #     -H "Authorization: ${{ secrets.CLICKUP_TOKEN }}" \
+      #     -H "Content-Type: application/json" \
+      #     -d '{
+      #       "name": "PR #'${PR_NUMBER}' Task",
+      #       "description": "This task is associated with PR number '${PR_NUMBER}'",
+      #       "status": "open",
+      #       "assignees": [90602611],
+      #       "custom_fields": [
+      #         {
+      #           "id": "8b298a3f-2e44-4b69-b7ef-9769f1417bd8",
+      #           "value": "'${PR_NUMBER}'"
+      #         }
+      #       ]
+      #     }'
