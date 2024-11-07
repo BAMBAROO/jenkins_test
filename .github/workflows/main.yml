@@ -23,6 +23,31 @@ jobs:
           ref: master
           fetch-depth: 0
 
+      - name: Check for merge conflicts
+        id: conflicts
+        uses: actions/github-script@v6
+        with:
+          script: |
+            if (github.event.pull_request) {
+              const response = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: github.event.pull_request.number
+              });
+              const mergeable = response.data.mergeable;
+              if (mergeable === false) {
+                console.log("Conflict detected in pull request #" + github.event.pull_request.number);
+                return "true";
+              } else {
+                console.log("No conflict detected in pull request #" + github.event.pull_request.number);
+                return "false";
+              }
+            } else {
+              console.log("This event is not a pull request. Skipping conflict check.");
+              return "false";
+            }
+          result-encoding: string
+
       - name: Create Pull Request
         if: ${{ success() }}
         id: create_pr
@@ -61,26 +86,6 @@ jobs:
               }
             ]
           }'
-
-      - name: Check for merge conflicts
-        id: conflicts
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const response = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: github.event.pull_request.number
-            });
-            const mergeable = response.data.mergeable;
-            if (mergeable === false) {
-              console.log("Conflict detected in pull request #" + github.event.pull_request.number);
-              return "true";
-            } else {
-              console.log("No conflict detected in pull request #" + github.event.pull_request.number);
-              return "false";
-            }
-          result-encoding: string
 
       - name: Log conflict notification
         if: steps.conflicts.outputs.result == 'true'
