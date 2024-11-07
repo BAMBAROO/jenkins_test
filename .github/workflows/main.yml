@@ -43,9 +43,10 @@ jobs:
           else
             echo "Merge failed with conflicts."
             echo "merge_status=conflict" >> $GITHUB_ENV
-            # Escape karakter khusus di pesan konflik
-            merge_message=$(cat merge_output.txt | sed 's/%/%25/g; s/\n/%0A/g; s/\r/%0D/g')
-            echo "merge_message=$merge_message" >> $GITHUB_ENV
+            # Simpan pesan konflik ke file sementara dan gunakan `printf` untuk format yang aman
+            merge_message=$(<merge_output.txt)
+            echo "${merge_message}" | sed 's/%/%25/g; s/\n/%0A/g; s/\r/%0D/g' > temp_merge_message.txt
+            printf "merge_message=%s\n" "$(cat temp_merge_message.txt)" >> $GITHUB_ENV
             git --no-pager diff --name-only --diff-filter=U
           fi
         shell: bash
@@ -63,7 +64,6 @@ jobs:
         run: |
           echo "Merge was successful. Proceeding with the workflow..."
           # Tambahkan tindakan yang ingin Anda jalankan jika merge berhasil
-
 
       - name: Create Pull Request
         if: ${{ success() }}
