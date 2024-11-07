@@ -31,7 +31,7 @@ jobs:
           cd develop
           git fetch origin master
           git checkout -b temp-merge-branch
-          git merge origin/master --no-commit --no-ff
+          git merge origin/master --no-commit --no-ff --allow-unrelated-histories
           if [ $? -eq 0 ]; then
             echo "Merge succeeded with no conflicts."
             echo "::set-output name=merge_status::success"
